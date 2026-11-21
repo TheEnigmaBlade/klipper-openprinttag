@@ -3,10 +3,14 @@
 set -eo pipefail
 
 OPT_NAME="klipper-openprinttag"
+
 OPT_DIR=$(readlink -f "$(dirname "$0")")
 OPT_UV_DIR="$OPT_DIR"/.uv
 OPT_UV="$OPT_UV_DIR"/uv
 OPT_VENV="$OPT_DIR"/.venv
+
+PRINTER_CONFIG_DIR="$HOME/printer_data/config"
+MOONRAKER_CONFIG_FILE="$PRINTER_CONFIG_DIR/moonraker.conf"
 
 install_uv() {
   # Check if uv is already available, otherwise install a local copy
@@ -69,6 +73,26 @@ EOF
   sudo systemctl daemon-reload
 }
 
+setup_moonraker_update() {
+  echo "Configuring Moonraker update..."
+  if [ ! -w "$MOONRAKER_CONFIG_FILE" ]; then
+    return 1
+  fi
+
+  cat >> "$MOONRAKER_CONFIG_FILE" <<EOF
+[update_manager ${OPT_NAME}]
+type: git_repo
+channel: stable
+path: ${OPT_DIR}
+origin: https://github.com/TheEnigmaBlade/klipper-openprinttag
+virtualenv: ${OPT_DIR}/.venv/bin/python
+requirements: pyproject.toml
+install_script: install.sh
+managed_services:
+  ${OPT_NAME}
+EOF
+}
+
 #
 
 install_uv
@@ -78,5 +102,6 @@ sudo systemctl stop "$OPT_NAME" 2>/dev/null || true
 create_venv
 install_deps
 create_service
+setup_moonraker_update
 
 sudo systemctl restart $OPT_NAME
