@@ -75,7 +75,12 @@ EOF
 
 setup_moonraker_update() {
   echo "Configuring Moonraker update..."
+  if grep -Fq "[update_manager ${OPT_NAME}]" "$MOONRAKER_CONFIG_FILE"; then
+    return 0
+  fi
+
   if [ ! -w "$MOONRAKER_CONFIG_FILE" ]; then
+    echo "Moonraker configuration file is not writable ($MOONRAKER_CONFIG_FILE)"
     return 1
   fi
 
