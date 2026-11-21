@@ -1,9 +1,10 @@
 from pathlib import Path
 
 try:
+	# noinspection compatibility
 	import tomllib
 except ModuleNotFoundError:
-	# To support Python 3.10
+	# To support Python 3.10, 3.9
 	import tomli as tomllib
 
 _meta_file = Path(__file__).parent.parent / "pyproject.toml"
