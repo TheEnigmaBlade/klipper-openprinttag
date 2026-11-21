@@ -89,10 +89,8 @@ setup_moonraker_update() {
 type: git_repo
 channel: stable
 path: ${OPT_DIR}
-origin: https://github.com/TheEnigmaBlade/klipper-openprinttag
-virtualenv: ${OPT_DIR}/.venv/bin/python
-requirements: pyproject.toml
-install_script: install.sh
+origin: https://github.com/TheEnigmaBlade/klipper-openprinttag.git
+primary_branch: main
 managed_services:
   ${OPT_NAME}
 EOF
